@@ -1,0 +1,18 @@
+FROM maven:3.6.0-jdk-8-slim
+
+WORKDIR /app
+ADD task6/DostavimVse /app
+
+
+
+RUN mvn clean package -Dmaven.test.skip -Dstart-class=ru.fivt.dostavimvse.DostavimvseApplication && mv /src/target/dostavimvse-0.0.1-SNAPSHOT.jar /run.jar && mvn clean package -Dmaven.test.skip -Dstart-class=Main && mv /src/target/dostavimvse-0.0.1-SNAPSHOT.jar /seed.jar
+RUN apt-get update && apt-get install -y mysql-client
+
+ADD task6/scripts/CREATE.sql /CREATE.sql
+ADD task2.sh /task2.sh
+RUN chmod +x /task2.sh
+
+
+RUN apt-get clean && rm -rf /app
+
+ENTRYPOINT [ "/task2.sh" ]
